@@ -1,0 +1,45 @@
+version: '3'
+services:
+  multimodulebuilder:
+    build:
+      context: .
+  auldfellas:
+    build: auldfellas
+    environment:
+      REMOTE_REFERENCE_NAME: qs-AuldFellasService
+    depends_on:
+      - multimodulebuilder
+  girlpower:
+    build: girlpower
+    environment:
+      REMOTE_REFERENCE_NAME: qs-GirlPowerService
+    depends_on:
+      - multimodulebuilder
+  dodgydrivers:
+    build: dodgydrivers
+    environment:
+      REMOTE_REFERENCE_NAME: qs-DodgyDriversService
+    depends_on:
+      - multimodulebuilder
+  broker:
+    build: broker
+    environment:
+      REMOTE_REFERENCE_NAME: bs-BrokerService
+      QUOTATION_REMOTE_REFERENCE_NAMES: qs-AuldFellasService,qs-GirlPowerService,qs-DodgyDriversService
+      QUOTATION_REMOTE_REGISTRY_HOSTS: auldfellas,girlpower,dodgydrivers
+    depends_on:
+      - multimodulebuilder
+      - auldfellas
+      - dodgydrivers
+      - girlpower
+  client:
+    build: client
+    environment:
+      BROKER_REMOTE_REFERENCE_NAME: bs-BrokerService
+      BROKER_REGISTRY_HOST: broker
+    depends_on:
+      - multimodulebuilder
+      - broker
+      - auldfellas
+      - girlpower
+      - dodgydrivers
